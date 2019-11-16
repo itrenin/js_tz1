@@ -108,11 +108,15 @@ function returnArgumentsArray() {
 
    console.log(newSum()) выведет 6
  */
+function bindFunction(fn, ...args) {
+    
+    const that = this;
+    return function() {
+        return fn.apply(that, args);
+    }
 
-const bindFunction = (fn, ...params) => {
-  return () => fn.apply(this, params)
+
 }
-
 
 export {
     returnFirstArgument,
