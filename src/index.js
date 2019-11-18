@@ -50,6 +50,7 @@ function returnFnResult(fn) {
     if (!fn) {
         fn = 0;
     }
+
     return fn();
 }
 
@@ -70,6 +71,7 @@ function returnCounter(number) {
     if (!number) {
         number = 0;
     }
+
     return function F () {
         
         return ++number;
@@ -85,11 +87,15 @@ function returnCounter(number) {
  Пример:
    returnArgumentsArray(1, 2, 3) вернет [1, 2, 3]
  */
+
 function returnArgumentsArray() {
+
     var args = [];
+
     for (var i = 0; i < arguments.length; i++) {
-      args[i] = arguments[i];
-        }  
+        args[i] = arguments[i];
+    }
+
     return args;
 }
 
@@ -111,11 +117,11 @@ function returnArgumentsArray() {
 function bindFunction(fn, ...args) {
     
     const that = this;
+
     return function() {
+
         return fn.apply(that, args);
     }
-
-
 }
 
 export {
