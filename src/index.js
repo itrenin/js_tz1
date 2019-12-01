@@ -25,7 +25,7 @@ function createDivWithText(text) {
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
 function prepend(what, where) {
-    
+
     return where.prepend(what);
 }
 
@@ -101,6 +101,7 @@ function findError(where) {
  */
 function deleteTextNodes(where) {
     for (let element of where.childNodes) {
+
         if (element.nodeType === 3) {
             element.remove();
         }
@@ -121,6 +122,16 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    let array = [...where.childNodes];
+
+    array.forEach(element => {
+        if (element.childNodes.length != 0) {
+            deleteTextNodesRecursive(element);
+        }
+        if (element.nodeType === 3) {
+            element.remove();
+        }
+    });
 }
 
 /*
@@ -144,6 +155,77 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+
+    let tag = [];
+    let texts = [];
+    let classes = [];
+
+    arrayDOM(root);
+
+    function arrayDOM(root) {
+        let array = Array.from(root.childNodes);
+
+
+        for (let element of array) {
+            if (element.childNodes.length != 0) {
+                arrayDOM(element);
+            }
+            if (element.nodeType === 3) {
+                texts.push(element);
+            } else if (element.nodeType === 1) {
+                if (element.className !== '') {
+                    classes.push(element.classList);
+                }
+                tag.push(element)
+            }
+        }
+
+    }
+
+    function arrayFromClasses(arrayOfArrays) {
+        let result = [];
+        for (let elem of arrayOfArrays) {
+            if (elem.length != 0) {
+                for (let innerElem of elem) {
+                    result.push(innerElem);
+                }
+            } else result.push(elem);
+        }
+        return result;
+    }
+
+    function elemCounter(element, array) {
+        let counter = 0;
+
+        array.forEach(el => {
+            if (el === element) {
+                counter++;
+            }
+        });
+
+        return counter;
+    }
+
+    function returnElemStat(array) {
+        let unicElem = [...new Set(array)];
+        console.log(unicElem);
+        let resultObject = {};
+        for (let e of unicElem) {
+            Object.defineProperty(resultObject, e,
+                {
+                    value: elemCounter(e, array)
+                });
+        }
+        return resultObject;
+    }
+    
+    let result = {};
+    result.tags = returnElemStat(tag);
+    result.classes = returnElemStat(arrayFromClasses(classes));
+    result.texts = texts.length;
+
+    return result;
+
 }
 
 /*
