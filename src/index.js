@@ -47,7 +47,8 @@ function skipDefault(eventName, target) {
    emulateClick(document.querySelector('a')) // для указанного элемента должно быть сэмулировано события click
  */
 function emulateClick(target) {
-    var event = new Event('click');
+    let event = new Event('click');
+
     target.dispatchEvent(event);
 
 }
@@ -78,8 +79,17 @@ function delegate(target, fn) {
  Пример:
    once(document.querySelector('button'), () => console.log('обработчик выполнился!')) // добавит такой обработчик кликов для указанного элемента, который вызовется только один раз и затем удалится
  */
-function once(target, fn) {
-    target.addEventListener('click', fn, {once: true});
+function once(target, fn) {  
+    let flag = true;
+    
+    target.addEventListener ('click', () => {
+        if (flag) {
+            fn();
+            flag = false;
+        }
+        target.removeEventListener('click', (e) => e);
+    })
+    
 }
 
 export {

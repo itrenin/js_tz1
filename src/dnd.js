@@ -27,6 +27,28 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+
+    let element = document.createElement('div');
+
+    element.style.width = Math.random() * 200 + 'px';
+    element.style.height = Math.random() * 200 + 'px';
+    element.style.background = createColor();
+
+    function createColor() {
+        return '#' + [...Math.random().toString(16)]
+            .slice(2, 8)
+            .toString()
+            .split(',')
+            .join('');
+    }
+
+    element.style.position = ('absolute');
+    element.style.top = Math.random() * 200 + 'px';
+    element.style.left = Math.random() * 200 + 'px';
+    element.classList.add('draggable-div');
+    element.draggable = true;
+
+    return element;
 }
 
 /*
@@ -38,11 +60,30 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.addEventListener('mousedown', () => {
+
+        function moveAt(pageX, pageY) {
+            target.style.left = pageX - target.offsetWidth / 2 + 'px';
+            target.style.top = pageY - target.offsetHeight / 2 + 'px';
+        }
+
+        function onMouseMove(e) {
+            moveAt(e.pageX, e.pageY);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        target.addEventListener('mouseup', () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            target.onmouseup = null;
+        });
+
+    })
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
 
-addDivButton.addEventListener('click', function() {
+addDivButton.addEventListener('click', function () {
     // создать новый div
     const div = createDiv();
 
