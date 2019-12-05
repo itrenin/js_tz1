@@ -1,3 +1,5 @@
+import { resolve } from "path";
+
 /*
  Страница должна предварительно загрузить список городов из
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -37,6 +39,28 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
+
+    async function f() {
+        try {
+            const response = await fetch(url);
+            const cities = await response.json();
+
+            return cities.sort((a, b) => {
+                if (a.name > b.name) {
+                    return 1;
+                }
+                if (a.name < b.name) {
+                    return -1;
+                }
+
+                return 0;
+            })
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+    return f();
 }
 
 /*
@@ -51,6 +75,8 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    let check = full.toLowerCase().indexOf(chunk.toLowerCase()) < 0 ? check = false : check = true;
+    return check;
 }
 
 /* Блок с надписью "Загрузка" */
@@ -62,10 +88,61 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function() {
-    // это обработчик нажатия кливиш в текстовом поле
-});
+function run() {
+    loadTowns()
+        .then((cities) => {
+            loadingBlock.style.display = 'none';
+            filterBlock.style.display = 'block';
+            
+            filterInput.addEventListener('keyup', function () {
+                // это обработчик нажатия кливиш в текстовом поле
+                
+                while (filterResult.firstChild) {
+                    filterResult.removeChild(filterResult.firstChild);
+                }
 
+                if (filterInput.value) {
+                    for (const city of cities) {
+                        if (isMatching(city.name, filterInput.value)) {
+                            filterResult.appendChild(createCityNode(city.name));
+                        }                        
+                    }
+                }                
+            });            
+        })
+        .catch(() => {
+            //console.log('ошибочка');
+            loadingBlock.textContent = 'Не удалось загрузить города';
+            loadingBlock.appendChild(createReloadButton());
+
+            const reload = homeworkContainer.querySelector('.reload-button');
+
+            reload.addEventListener('click', (e) => {
+                run();
+            })
+
+        }
+
+        );
+}
+
+run();
+
+function createCityNode(name) {
+    const div = document.createElement('DIV');
+    div.classList.add('city');
+    div.textContent = name;
+
+    return div;
+}
+
+function createReloadButton() {
+    const button = document.createElement('BUTTON');
+    button.classList.add('reload-button');
+    button.textContent = 'Повторить';
+
+    return button;
+}
 export {
     loadTowns,
     isMatching
