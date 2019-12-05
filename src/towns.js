@@ -111,19 +111,16 @@ function run() {
             });            
         })
         .catch(() => {
-            //console.log('ошибочка');
             loadingBlock.textContent = 'Не удалось загрузить города';
             loadingBlock.appendChild(createReloadButton());
 
             const reload = homeworkContainer.querySelector('.reload-button');
 
             reload.addEventListener('click', (e) => {
+                e.preventDefault();
                 run();
             })
-
-        }
-
-        );
+        });
 }
 
 run();
