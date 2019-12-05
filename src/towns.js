@@ -1,4 +1,4 @@
-import { resolve } from "path";
+import { loadAndSortTowns } from './index';
 
 /*
  Страница должна предварительно загрузить список городов из
@@ -39,28 +39,29 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
+    return loadAndSortTowns();
+    // let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
+    
+    // async function f() {
+    //     try {
+    //         const response = await fetch(url);
+    //         const cities = await response.json();
 
-    async function f() {
-        try {
-            const response = await fetch(url);
-            const cities = await response.json();
+    //         return cities.sort((a, b) => {
+    //             if (a.name > b.name) {
+    //                 return 1;
+    //             }
+    //             if (a.name < b.name) {
+    //                 return -1;
+    //             }
 
-            return cities.sort((a, b) => {
-                if (a.name > b.name) {
-                    return 1;
-                }
-                if (a.name < b.name) {
-                    return -1;
-                }
-
-                return 0;
-            })
-        } catch (e) {
-            throw new Error(e.message);
-        }
-    }
-    return f();
+    //             return 0;
+    //         })
+    //     } catch (e) {
+    //         throw new Error(e.message);
+    //     }
+    // }
+    // return f();
 }
 
 /*
@@ -76,6 +77,7 @@ function loadTowns() {
  */
 function isMatching(full, chunk) {
     let check = full.toLowerCase().indexOf(chunk.toLowerCase()) < 0 ? check = false : check = true;
+
     return check;
 }
 
@@ -127,6 +129,7 @@ run();
 
 function createCityNode(name) {
     const div = document.createElement('DIV');
+
     div.classList.add('city');
     div.textContent = name;
 
@@ -135,6 +138,7 @@ function createCityNode(name) {
 
 function createReloadButton() {
     const button = document.createElement('BUTTON');
+
     button.classList.add('reload-button');
     button.textContent = 'Повторить';
 
